@@ -60,16 +60,16 @@
                                             Y="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
                                             />
                                     </Border.RenderTransform>
-                                    <TextBlock Text="{Binding BaumNr}" FontSize="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource MarkerFontSizeConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False">
-                                        <TextBlock.RenderTransform>
-                                            <TranslateTransform
+
+                                </Border>
+                                <TextBlock Text="{Binding BaumNr}" FontSize="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource MarkerFontSizeConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False">
+                                <TextBlock.RenderTransform>
+                                    <TranslateTransform
                                         X="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
                                         Y="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
                                         />
-                                        </TextBlock.RenderTransform>
-                                    </TextBlock>
-                                </Border>
-
+                                </TextBlock.RenderTransform>
+                                </TextBlock>
                             </Grid>
                                 <!--<Grid Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" >
                                 <Grid.RenderTransform>
