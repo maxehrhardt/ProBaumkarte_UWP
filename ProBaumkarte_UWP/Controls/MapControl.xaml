@@ -1,0 +1,102 @@
+﻿<UserControl
+    x:Class="ProBaumkarte_UWP.Controls.MapControl"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:ProBaumkarte_UWP.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:canvas="using:Microsoft.Graphics.Canvas.UI.Xaml"
+    xmlns:models="using:ProBaumkarte_UWP.Models.Baum"
+    xmlns:converter="using:ProBaumkarte_UWP.Converter"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400"
+    x:Name="UserControl">
+    
+    
+    <UserControl.Resources>
+        <converter:MapModeToIsCheckedConverter x:Key="MapModeConverter"/>
+        <converter:TreePositionConverter x:Key="TreePositionConverter"/>
+        <converter:IsMarkedToColorConverter x:Key="IsMarkedToColorConverter"/>
+        <converter:MapModeToFalseConverter x:Key="MapModeToFalseConverter"/>
+        <converter:MarkerFontSizeConverter x:Key="MarkerFontSizeConverter"/>
+    </UserControl.Resources>
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <!--<Button Grid.Row="0" Click="Button_Click"/>-->
+
+        <ScrollViewer x:Name="Scroll" Grid.Row="0" VerticalScrollMode="Enabled" VerticalScrollBarVisibility="Auto" HorizontalScrollMode="Auto" HorizontalScrollBarVisibility="Visible" ZoomMode="Enabled" MinZoomFactor="1" ViewChanging="Scroll_ViewChanged" >
+            <Grid  Background="Transparent" x:Name="mapGrid" VerticalAlignment="Center" HorizontalAlignment="Center">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <!--<Border Background="Transparent" IsHitTestVisible="{Binding MapMode,Converter={StaticResource MapModeToFalseConverter}, ConverterParameter=3,ElementName=UserControl}"/>-->
+                <WebView x:Name="webView" IsHitTestVisible="True" IsTapEnabled="True"  Visibility="Collapsed" />
+                <Image x:Name="mapImage"  IsHitTestVisible="True" PointerPressed="MapCanvas_PointerPressed"/>
+                <!--<Canvas x:Name="MapCanvas" Background="Transparent" Visibility="Collapsed" />-->
+                <local:CanvasItemsControl ItemsSource="{Binding BaumCollection, ElementName=UserControl,UpdateSourceTrigger=PropertyChanged}" x:Name="MapCanvas">
+                    <local:CanvasItemsControl.ItemsPanel >
+                        <ItemsPanelTemplate >
+                            <Canvas ManipulationMode="All">
+                            </Canvas>
+                        </ItemsPanelTemplate>
+                    </local:CanvasItemsControl.ItemsPanel>
+                    <local:CanvasItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid>
+
+
+                                <Border CornerRadius="180" Width="{Binding TreeMarkerSize,ElementName=UserControl}" Height="{Binding TreeMarkerSize,ElementName=UserControl}" Background="{Binding IsMarked, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource IsMarkedToColorConverter}}" Opacity="0.5" PointerPressed="OnTreePointerPressed"  >
+                                    <Border.RenderTransform>
+                                        <TranslateTransform
+                                            X="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
+                                            Y="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
+                                            />
+                                    </Border.RenderTransform>
+                                    <TextBlock Text="{Binding BaumNr}" FontSize="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource MarkerFontSizeConverter}}" VerticalAlignment="Center" HorizontalAlignment="Center" TextAlignment="Center" IsHitTestVisible="False">
+                                        <TextBlock.RenderTransform>
+                                            <TranslateTransform
+                                        X="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
+                                        Y="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"
+                                        />
+                                        </TextBlock.RenderTransform>
+                                    </TextBlock>
+                                </Border>
+
+                            </Grid>
+                                <!--<Grid Canvas.Left="{Binding X}" Canvas.Top="{Binding Y}" >
+                                <Grid.RenderTransform>
+                                    <TranslateTransform X="-5" Y="-5"/>
+                                </Grid.RenderTransform>
+                                
+                                <Ellipse Fill="CornflowerBlue"
+                                              Width="10" 
+                                              Height="10"
+                                              PointerPressed="OnTreePointerPressed">
+                                    -->
+                            <!--<Ellipse Fill="CornflowerBlue" 
+                                              Canvas.Left="{Binding X, Converter={StaticResource TreePositionConverter},ConverterParameter={Binding DataContext.TreeMarkerSize, ElementName=UserControl}}" 
+                                              Canvas.Top="{Binding Y}" 
+                                              Width="50" Height="50"
+                                              PointerPressed="OnTreePointerPressed">-->
+                            <!--
+                                    
+                                </Ellipse>
+                                <TextBlock Text="{Binding BaumNr}" Width="10" Height="10" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            </Grid>-->
+                        </DataTemplate>
+                    </local:CanvasItemsControl.ItemTemplate>
+                </local:CanvasItemsControl>
+
+            </Grid>
+        </ScrollViewer>
+        <!--<canvas:CanvasControl x:Name="mapControl" Draw="CanvasControl_Draw" CreateResources="CanvasControl_CreateResources" Grid.Row="1"/>-->
+    </Grid>
+</UserControl>
