@@ -35,6 +35,7 @@ namespace ProBaumkarte_UWP.ViewModels
         public RelayCommand OpenMapCommand { get; private set; }
         public RelayCommand SaveMapCommand { get; private set; }
         public RelayCommand ExportMapCommand { get; private set; }
+        public RelayCommand ImportMapCommand { get; private set; }
         public RelayCommand NavigateCommand { get; private set; }
         public RelayCommand SetBaumCommand { get; private set; }
         public RelayCommand MoveBaumCommand { get; private set; }
@@ -210,6 +211,7 @@ namespace ProBaumkarte_UWP.ViewModels
             get { return _BaumCollection; }
             set
             {
+                
                 if (value != _BaumCollection)
                 {
                     _BaumCollection = value;
@@ -261,9 +263,6 @@ namespace ProBaumkarte_UWP.ViewModels
 
             BaumCollection = new ObservableCollection<Baum>();
             CurrentBaum = new Baum { BaumNr = 1 };
-            //BaumCollection.Add(CurrentBaum);
-            //CurrentBaum = new Baum { BaumNr = 1, X = 100, Y = 200 };
-            //BaumCollection.Add(CurrentBaum);
             TreeMarkerSize = 10;
             RaisePropertyChanged(() => BaumCollection);
 
@@ -272,6 +271,7 @@ namespace ProBaumkarte_UWP.ViewModels
             OpenMapCommand = new RelayCommand(OpenMapCommandAction);
             SaveMapCommand = new RelayCommand(SaveMapCommandAction);
             ExportMapCommand = new RelayCommand(ExportMapCommandAction);
+            ImportMapCommand = new RelayCommand(ImportMapCommandAction);
             NavigateCommand = new RelayCommand(NavigateCommandAction);
             SetBaumCommand = new RelayCommand(SetBaumCommandAction);
             MoveBaumCommand = new RelayCommand(MoveBaumCommandAction);
@@ -350,36 +350,31 @@ namespace ProBaumkarte_UWP.ViewModels
             Messenger.Default.Send<NotificationMessageAction<SoftwareBitmap>>(new NotificationMessageAction<SoftwareBitmap>("",ProcessSavedImage));
 
         }
+
+        private async void ImportMapCommandAction()
+        {
+            try
+            {
+                MapAndTrees mapAndTrees = await _fileService.ImportMap();
+                if (mapAndTrees != null)
+                {
+                    BaumCollection = mapAndTrees.baumListe;
+                    MapSource = mapAndTrees.map;
+                }
+            }
+            catch (Exception)
+            {
+                _dialogService.ShowErrorDialog("Etwas ist beim importieren schief gelaufen.");
+                
+            }
+           
+
+
+        }
+
         private async void SaveMapCommandAction()
         {
-            //Messenger.Default.Send(new RenderImageMessage());
-            //Messenger.Default.Send<NotificationMessageAction<SoftwareBitmap>>(new NotificationMessageAction<SoftwareBitmap>("",ProcessSavedImage));
-
             _fileService.SaveMap(MapSource, BaumCollection);
-
-            //BitmapDecoder imagedecoder;
-            //using (var imagestream = await Map.OpenAsync(FileAccessMode.Read))
-            //{
-            //    imagedecoder = await BitmapDecoder.CreateAsync(imagestream);
-
-            //    CanvasDevice device = CanvasDevice.GetSharedDevice();
-            //    CanvasRenderTarget renderTarget = new CanvasRenderTarget(device, imagedecoder.PixelWidth, imagedecoder.PixelHeight, 96);
-            //    using (var ds = renderTarget.CreateDrawingSession())
-            //    {
-            //        ds.Clear(Colors.White);
-            //        CanvasBitmap image = await CanvasBitmap.LoadAsync(device, imagestream);
-            //        ds.DrawImage(image);
-            //        //ds.DrawText(lblName.Text, new System.Numerics.Vector2(150, 150), Colors.Black);
-            //    }
-
-            //    await renderTarget.SaveAsync(imagestream, CanvasBitmapFileFormat.Jpeg);
-
-            //    BitmapImage bitmap = new BitmapImage();
-            //    bitmap.SetSource(imagestream);
-
-            //    MapR = bitmap;
-            //}
-
         }
 
         private void NavigateCommandAction()

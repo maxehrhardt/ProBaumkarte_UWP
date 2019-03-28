@@ -24,9 +24,9 @@ namespace ProBaumkarte_UWP.ViewModels
         public ViewModelLocator()
         {
             ServiceLocator.SetLocatorProvider(() => SimpleIoc.Default);
-            var file = new FileService();
+            
             var dialog = new ProBaumkarte_UWP.Services.Dialog.DialogService();
-
+            var file = new FileService(dialog);
             if (ViewModelBase.IsInDesignModeStatic)
             {
                 // Create design time view services and models

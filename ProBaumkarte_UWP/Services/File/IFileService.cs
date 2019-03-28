@@ -18,6 +18,7 @@ namespace ProBaumkarte_UWP.Services.File
         Task<MapFile> GetFile();
         void SaveImage(SoftwareBitmap softwareBitmap);
         void SaveMap(MapFile mapFile, ObservableCollection<Baum> baumCollection);
+        Task<MapAndTrees> ImportMap();
 
     }
 }

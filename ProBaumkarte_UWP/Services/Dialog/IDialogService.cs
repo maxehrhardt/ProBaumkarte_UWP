@@ -11,6 +11,6 @@ namespace ProBaumkarte_UWP.Services.Dialog
     {
         Task<bool> ShowGeoDataQuestionDialog();
         Task<MapGeoData> ShowGeoDataEntryDialog();
-
+        void ShowErrorDialog(string message);
     }
 }

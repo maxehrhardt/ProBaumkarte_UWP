@@ -51,7 +51,9 @@
             <TextBox Header="Baum Nr." Text="{Binding SelectedBaum.BaumNr,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
             <TextBlock Text="Marker Einstellungen"/>
             <TextBox Header="Marker Größe" Text="{Binding TreeMarkerSize, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
+            <!--<ColorPicker></ColorPicker>-->
         </StackPanel>
+        
         <!--<Image Grid.Column="2" Source="{Binding MapSource.svgImageSource}"/>-->
         <!--<controls:CanvasItemsControl ItemsSource="{Binding BaumCollection}" Grid.Column="1">
             <controls:CanvasItemsControl.ItemsPanel>
@@ -81,6 +83,7 @@
         <CommandBar>
             <AppBarButton Label="Karte Speichern" Icon="Save" Command="{Binding SaveMapCommand}"/>
             <AppBarButton Label="Karte Exportieren" Icon="Download" Command="{Binding ExportMapCommand}"/>
+            <AppBarButton Label="Karte Importieren" Icon="Upload" Command="{Binding ImportMapCommand}"/>
             <AppBarButton Label="Karte Laden" Icon="Map" Command="{Binding OpenMapCommand}"/>
             <AppBarSeparator/>
             <AppBarToggleButton Label="Ansicht Ändern" Command="{Binding NavigateCommand}" IsChecked="{Binding MapMode,Mode=TwoWay, Converter={StaticResource MapModeConverter}, ConverterParameter=3}">

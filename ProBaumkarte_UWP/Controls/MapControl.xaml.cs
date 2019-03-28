@@ -329,7 +329,8 @@ namespace ProBaumkarte_UWP.Controls
         
         private async void RenderImage(NotificationMessageAction<SoftwareBitmap> notificationMessageAction)
         {
-            if (BaumCollection.Count > 0)
+
+            if(BaumCollection!=null && BaumCollection.Count > 0)
             {
                 if (BaumCollection.Where(x => x.IsMarked == true).Count() > 0)
                 {
@@ -343,13 +344,16 @@ namespace ProBaumkarte_UWP.Controls
             RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
             
             await renderTargetBitmap.RenderAsync(mapGrid);
+            if(renderTargetBitmap.PixelHeight!=0 && renderTargetBitmap.PixelWidth != 0)
+            {
+                SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, renderTargetBitmap.PixelWidth, renderTargetBitmap.PixelHeight);
+                softwareBitmap.DpiX = 600;
+                softwareBitmap.DpiY = 600;
+                softwareBitmap.CopyFromBuffer(await renderTargetBitmap.GetPixelsAsync());
 
-            SoftwareBitmap softwareBitmap = new SoftwareBitmap(BitmapPixelFormat.Bgra8, renderTargetBitmap.PixelWidth, renderTargetBitmap.PixelHeight);
-            softwareBitmap.DpiX = 600;
-            softwareBitmap.DpiY = 600;
-            softwareBitmap.CopyFromBuffer(await renderTargetBitmap.GetPixelsAsync());
+                notificationMessageAction.Execute(softwareBitmap);
+            }
 
-            notificationMessageAction.Execute(softwareBitmap);
 
 
 
@@ -436,73 +440,6 @@ namespace ProBaumkarte_UWP.Controls
             set { SetValue(MapSourceProperty, value); }
         }
 
-        //public static readonly DependencyProperty MapBitmapSourceProperty = DependencyProperty.Register("MapBitmapSource", typeof(ImageSource), typeof(MapControl), new PropertyMetadata(null, new PropertyChangedCallback(OnMapBitmapSourceChanged)));
-
-        //private static void OnMapBitmapSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    MapControl mapcontrol = d as MapControl;
-        //    mapcontrol.mapImage.Source = mapcontrol.MapBitmapSource;
-        //    mapcontrol.webView.Visibility = Visibility.Collapsed;
-        //    mapcontrol.mapImage.Visibility = Visibility.Visible;
-
-            
-            
-        //}
-
-        //public ImageSource MapBitmapSource
-        //{
-        //    get { return (ImageSource)GetValue(MapBitmapSourceProperty); }
-        //    set { SetValue(MapBitmapSourceProperty, value);}
-        //}
-
-
-
-        //public static readonly DependencyProperty MapSvgSourceProperty = DependencyProperty.Register("MapSvgSource", typeof(string), typeof(MapControl), new PropertyMetadata(null, new PropertyChangedCallback(OnMapSvgSourceChanged)));
-
-        //private async static void OnMapSvgSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
-        //{
-        //    MapControl mapcontrol = d as MapControl;
-        //    mapcontrol.mapImage.Visibility = Visibility.Collapsed;
-        //    mapcontrol.webView.Visibility = Visibility.Visible;
-        //    mapcontrol.webView.NavigateToString(mapcontrol.MapSvgSource);
-        //    await Task.Delay(500);
-        //    //mapcontrol.RedrawMap();
-        //    //mapcontrol.webView.LoadCompleted += async (s, args) => await mapcontrol.webView.InvokeScriptAsync("eval", new string[] { "document.body.style.width='100px'" });
-
-        //    //await mapcontrol.webView.InvokeScriptAsync("eval", new string[] { "document.body.style.width='100px'" });
-
-        //    var innerText= await mapcontrol.webView.InvokeScriptAsync("eval", new string[] { "document.body.style.width='100px'" });
-        //    //var innerText = await mapcontrol.webView.InvokeScriptAsync("eval", new string[] { "document.body.clientHeight.ToString()" });
-        //    //var innerText = await mapcontrol.webView.InvokeScriptAsync("eval", new string[] { "windwow.innerHeight.ToString()" });
-
-
-        //    mapcontrol.webView.Refresh();
-
-        //    RenderTargetBitmap renderTargetBitmap = new RenderTargetBitmap();
-        //    await renderTargetBitmap.RenderAsync(mapcontrol.webView);
-        //    mapcontrol.mapImage.Source = renderTargetBitmap;
-
-
-        //    //WebViewBrush b = new WebViewBrush();
-        //    //b.SetSource(mapcontrol.webView);
-            
-        //    //b.Redraw();
-        //    ////mapcontrol.webRect.Fill = b;
-        //    //mapcontrol.webRect.Background = b;
-            
-        //    mapcontrol.webView.Visibility = Visibility.Collapsed;
-
-        //    mapcontrol.mapImage.Visibility = Visibility.Visible;
-
-        //    //mapcontrol.webRect.Visibility = Visibility.Visible;
-        //}
-
-        //public string MapSvgSource
-        //{
-        //    get { return (string)GetValue(MapSvgSourceProperty); }
-        //    set { SetValue(MapSvgSourceProperty, value); }
-        //}
-
         public static readonly DependencyProperty RenderedMapBitmapSourceProperty = DependencyProperty.Register("RenderedMapBitmapSource", typeof(SoftwareBitmap), typeof(MapControl), new PropertyMetadata(null, new PropertyChangedCallback(OnRenderedMapBitmapSourceChanged)));
 
         private static void OnRenderedMapBitmapSourceChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -570,36 +507,7 @@ namespace ProBaumkarte_UWP.Controls
         public double treeMarkerSize;
 
         private void SetTree(PointerPoint imagePoint, PointerPoint canvasPoint)
-        {
-            //var ellipse1 = new Ellipse();
-            //ellipse1.Fill = new SolidColorBrush(Windows.UI.Colors.ForestGreen);
-            //ellipse1.Width = TreeMarkerSize;
-            //ellipse1.Height = TreeMarkerSize;
-            //ellipse1.Opacity = 0.5;
-
-            //ellipse1.PointerPressed += OnTreePointerPressed;
-
-            //Canvas.SetLeft(ellipse1, pointerPoint.Position.X - (ellipse1.Width / 2));
-            //Canvas.SetTop(ellipse1, pointerPoint.Position.Y - (ellipse1.Height / 2));
-            //MapCanvas.Children.Add(ellipse1);
-
-            //var textBlock = new TextBlock();
-            //textBlock.IsHitTestVisible = false;
-            //textBlock.FontStretch = Windows.UI.Text.FontStretch.UltraCondensed;
-            //textBlock.Text = CurrentBaum.BaumNr.ToString();
-            //textBlock.Opacity = 0.5;
-            //textBlock.FontSize = 0.9*TreeMarkerSize;
-            //textBlock.TextAlignment = TextAlignment.Center;
-
-            ////textBlock.Height = textBlock.FontSize*1.1;
-            ////textBlock.Width = textBlock.Text.Length * textBlock.FontSize*1.1;
-            //textBlock.Height = TreeMarkerSize;
-            //textBlock.Width = textBlock.Text.Length * TreeMarkerSize;
-            //Canvas.SetLeft(textBlock, pointerPoint.Position.X - (textBlock.Width/2));
-            //Canvas.SetTop(textBlock, pointerPoint.Position.Y - (textBlock.Height*1.2/2));
-
-            //MapCanvas.Children.Add(textBlock);
-            
+        {          
             Baum neuerBaum = new Baum();
             neuerBaum.CanvasPosition = canvasPoint.Position;
             neuerBaum.ImagePosition = imagePoint.Position;

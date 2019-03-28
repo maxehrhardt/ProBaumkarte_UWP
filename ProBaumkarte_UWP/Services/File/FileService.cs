@@ -4,6 +4,7 @@ using ProBaumkarte_UWP.Models.Map;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -19,11 +20,18 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using ProBaumkarte_UWP.Services.Dialog;
 
 namespace ProBaumkarte_UWP.Services.File
 {
-    public class FileService:IFileService
+    public class FileService : IFileService
     {
+        private readonly IDialogService _dialogService;
+
+        public FileService(IDialogService dialogService)
+        {
+            _dialogService = dialogService;
+        }
         public async Task<MapFile> GetFile()
         {
             //https://github.com/Microsoft/Windows-universal-samples/blob/e13cf5dca497ad661706d150a154830666913be4/Samples/PdfDocument/cs/Scenario1_Render.xaml.cs
@@ -63,7 +71,7 @@ namespace ProBaumkarte_UWP.Services.File
                         using (var stream2 = new InMemoryRandomAccessStream())
                         {
                             PdfPageRenderOptions options;
-                            
+
                             await page.RenderToStreamAsync(stream2);
                             //mapFile.MapBytes = new byte[bitmap.PixelHeight*bitmap.PixelWidth];
                             mapFile.MapBytes = new byte[(uint)stream2.AsStream().Length];
@@ -81,7 +89,7 @@ namespace ProBaumkarte_UWP.Services.File
 
 
 
-                         mapFile.MapImageSource = bitmap;
+                        mapFile.MapImageSource = bitmap;
                     }
 
 
@@ -155,7 +163,7 @@ namespace ProBaumkarte_UWP.Services.File
         {
             using (IRandomAccessStream stream = await outputFile.OpenAsync(FileAccessMode.ReadWrite))
             {
-                
+
                 // Create an encoder with the desired format
                 //BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.JpegEncoderId, stream);
                 BitmapEncoder encoder = await BitmapEncoder.CreateAsync(BitmapEncoder.PngEncoderId, stream);
@@ -197,55 +205,9 @@ namespace ProBaumkarte_UWP.Services.File
         }
 
 
-        public async void SaveMap(MapFile mapFile,ObservableCollection<Baum> baumCollection)
+        public async void SaveMap(MapFile mapFile, ObservableCollection<Baum> baumCollection)
         {
-            //XmlDocument map = new XmlDocument();
-
-
-            ////map.CreateElement("svg");
-            //XmlElement el=(XmlElement) map.AppendChild(map.CreateElement("svg"));
-
-            //map.DocumentElement.SetAttribute("xmlns", "http://www.w3.org/2000/svg");
-            //map.DocumentElement.SetAttribute("xmlns:xlink", "http://www.w3.org/1999/xlink");
-
-            //el.SetAttribute("height", mapFile.MapImageSource.PixelHeight.ToString());
-            //el.SetAttribute("width", mapFile.MapImageSource.PixelWidth.ToString());
-
-            ////Add trees to the XML
-            //foreach (var baum in baumCollection)
-            //{
-            //    XmlElement baumMarker = (XmlElement)el.AppendChild(map.CreateElement("circle"));
-
-            //    baumMarker.SetAttribute("cx", baum.X.ToString());
-            //    baumMarker.SetAttribute("cy", baum.Y.ToString());
-            //    baumMarker.SetAttribute("r", "10");
-            //    baumMarker.SetAttribute("fill", "green");
-            //    baumMarker.SetAttribute("fill-opacity", "0.5");
-
-            //    XmlElement baumNr = (XmlElement)el.AppendChild(map.CreateElement("text"));
-            //    baumNr.SetAttribute("x", baum.X.ToString());
-            //    baumNr.SetAttribute("y", baum.Y.ToString());
-            //    baumNr.SetAttribute("font-size", "8");
-
-            //    baumNr.AppendChild(map.CreateTextNode(baum.BaumNr.ToString()));
-            //}
-
-            ////Add the bitmap to the XML
-            //XmlElement background = (XmlElement)el.AppendChild(map.CreateElement("image"));
-
-            //background.SetAttribute("height", mapFile.MapImageSource.PixelHeight.ToString());
-            //background.SetAttribute("width", mapFile.MapImageSource.PixelWidth.ToString());
-
             string image = "data:image/png;base64, ";
-            //byte[] byteArray;
-            //using (Stream stream = mapFile.MapSoftwareImageSource.PixelBuffer.AsStream())
-            //{
-            //    byteArray = new byte[(uint)stream.Length];
-            //    await stream.ReadAsync(byteArray, 0, byteArray.Length);
-
-            //}
-
-
             try
             {
                 image = image + Convert.ToBase64String(mapFile.MapBytes);
@@ -254,18 +216,15 @@ namespace ProBaumkarte_UWP.Services.File
             {
                 //TODO: Message anzeigen!!!
                 return;
-                
+
             }
-
-
-            //background.SetAttribute("href",map.GetNamespaceOfPrefix("xlink") ,image);
 
             XDocument map = new XDocument();
 
             XNamespace svg_ns = "http://www.w3.org/2000/svg";
             XNamespace xlink_ns = "http://www.w3.org/1999/xlink";
             XNamespace baum_ns = "http://probaumkontrollen.org/probaumkontrollen";
-            XElement root = new XElement(svg_ns + "svg", new XAttribute(XNamespace.Xmlns + "xlink", "http://www.w3.org/1999/xlink"),new XAttribute(XNamespace.Xmlns + "probaumkontrollen", "http://probaumkontrollen.org/probaumkontrollen"), new XAttribute("width", mapFile.MapImageSource.PixelWidth.ToString()),new XAttribute("height", mapFile.MapImageSource.PixelHeight.ToString()));
+            XElement root = new XElement(svg_ns + "svg", new XAttribute(XNamespace.Xmlns + "xlink", "http://www.w3.org/1999/xlink"), new XAttribute(XNamespace.Xmlns + "probaumkontrollen", "http://probaumkontrollen.org/probaumkontrollen"), new XAttribute("width", mapFile.MapImageSource.PixelWidth.ToString()), new XAttribute("height", mapFile.MapImageSource.PixelHeight.ToString()));
 
 
             ////Add Map Background
@@ -277,66 +236,50 @@ namespace ProBaumkarte_UWP.Services.File
             ////Add trees to the XML
             XElement tree_group = new XElement(svg_ns + "g");
             tree_group.Add(new XAttribute("id", "Baum_Liste"));
-            
+
             foreach (var baum in baumCollection)
             {
                 XElement Baum_Element = new XElement(svg_ns + "g");
-               Baum_Element.Add(new XAttribute(baum_ns+"BaumNr", baum.BaumNr));
+                Baum_Element.Add(new XAttribute(baum_ns + "BaumNr", baum.BaumNr));
 
 
                 XElement baumMarker = new XElement(svg_ns + "circle");
                 baumMarker.Add(new XAttribute("cx", baum.ImagePosition.X));
                 baumMarker.Add(new XAttribute("cy", baum.ImagePosition.Y));
-                baumMarker.Add(new XAttribute("r", mapFile.TreeMarkersize/2));
+                baumMarker.Add(new XAttribute("r", mapFile.TreeMarkersize / 2));
                 baumMarker.Add(new XAttribute("fill", "green"));
                 baumMarker.Add(new XAttribute("fill-opacity", "0.5"));
 
                 Baum_Element.Add(baumMarker);
-                
+
                 XElement baumNr = new XElement(svg_ns + "text");
                 baumNr.Add(new XAttribute("x", baum.ImagePosition.X));
                 baumNr.Add(new XAttribute("y", baum.ImagePosition.Y));
-                baumNr.Add(new XAttribute("font-size", 0.8*mapFile.TreeMarkersize));
+                baumNr.Add(new XAttribute("font-size", 0.8 * mapFile.TreeMarkersize));
                 baumNr.Add(new XAttribute("text-anchor", "middle"));
                 baumNr.Add(new XAttribute("alignment-baseline", "central"));
                 baumNr.Add(new XText(baum.BaumNr.ToString()));
                 Baum_Element.Add(baumNr);
 
-        
+
                 tree_group.Add(Baum_Element);
             }
 
-            
+
             root.Add(background_group);
             root.Add(tree_group);
 
             map.Add(root);
-            // XmlNode attr = map.CreateNode(XmlNodeType.Attribute, "hlink",);
-            //StorageFile backgroundFile = await StorageFile.GetFileFromApplicationUriAsync(mapFile.MapImageSource.UriSource);
-
-            //using (var backgroundStream=await backgroundFile.OpenSequentialReadAsync())
-            //{
-            //    var readStream = backgroundStream.AsStreamForRead();
-            //    var byteArray = new byte[readStream.Length];
-            //    await readStream.ReadAsync(byteArray, 0, byteArray.Length);
-
-            //    string image = "data/"+Convert.ToBase64String(byteArray);
-            //    
-            //}
 
 
-
-
-
-
-            FileSavePicker fileSavePicker = new FileSavePicker();           
+            FileSavePicker fileSavePicker = new FileSavePicker();
             fileSavePicker.FileTypeChoices.Add("SVG Dateien", new List<string>() { ".svg" });
             fileSavePicker.SuggestedFileName = "Karte_" + DateTime.Now.ToString("dd_MM_yyyy");
-            
-            var file = await fileSavePicker.PickSaveFileAsync();
-            
 
-            if (file!=null)
+            var file = await fileSavePicker.PickSaveFileAsync();
+
+
+            if (file != null)
             {
                 using (Stream fileStream = await file.OpenStreamForWriteAsync())
                 {
@@ -344,6 +287,107 @@ namespace ProBaumkarte_UWP.Services.File
                     map.Save(fileStream);
                 }
             }
+
+        }
+
+        public async Task<MapAndTrees> ImportMap()
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".svg");
+            StorageFile file = await picker.PickSingleFileAsync();
+
+            MapFile mapFile = new MapFile();
+            ObservableCollection<Baum> baumCollection = new ObservableCollection<Baum>();
+            MapAndTrees mapAndTrees = new MapAndTrees();
+
+            if (file.FileType == ".svg")
+            {
+
+
+                using (IRandomAccessStream stream = await file.OpenReadAsync())
+                {
+                    XNamespace baum_ns = "http://probaumkontrollen.org/probaumkontrollen";
+                    XNamespace svg_ns = "http://www.w3.org/2000/svg";
+                    XNamespace xlink_ns = "http://www.w3.org/1999/xlink";
+
+                    string svgString = await Windows.Storage.FileIO.ReadTextAsync(file);
+                    try
+                    {
+                        XDocument xDocument = XDocument.Parse(svgString);
+
+                        //Geting the map
+                        XElement imageElement = xDocument.Descendants(svg_ns + "image").FirstOrDefault();
+                        string mapString = imageElement.Attribute(xlink_ns + "href").Value;
+                        mapString = mapString.Substring(mapString.IndexOf(",") + 1);
+                        byte[] mapBytes = Convert.FromBase64String(mapString);
+
+                        using (InMemoryRandomAccessStream imageStream = new InMemoryRandomAccessStream())
+                        {
+                            await imageStream.WriteAsync(mapBytes.AsBuffer());
+                            BitmapImage bitmapImage = new BitmapImage();
+                            imageStream.Seek(0);
+                            try
+                            {
+                                await bitmapImage.SetSourceAsync(imageStream);
+                            }
+                            catch (Exception)
+                            {
+
+                                _dialogService.ShowErrorDialog("Die importierte Datei enthält keine gültige Karte.");
+                                return null;
+                            }
+
+                            mapFile.MapImageSource = bitmapImage;
+                            mapFile.MapBytes = mapBytes;
+                        }
+
+
+
+
+                        mapFile.IsSvg = false;
+                        mapAndTrees.map = mapFile;
+
+
+                        // Getting the list of trees
+                        XElement xBaumliste = xDocument.Descendants().Where(el => el.HasAttributes && el.FirstAttribute.Name.ToString() == "id").FirstOrDefault();
+                        ObservableCollection<Baum> baumliste = new ObservableCollection<Baum>();
+                        if (!xBaumliste.IsEmpty)
+                        {
+                            foreach (var node in xBaumliste.Elements().ToList())
+                            {
+                                XElement xNode = node;
+                                Baum baum = new Baum();
+                                baum.BaumNr = Convert.ToInt16(node.Attribute(baum_ns + "BaumNr").Value);
+
+                                XElement circleNode = node.Elements(svg_ns + "circle").FirstOrDefault();
+
+                                Windows.Foundation.Point imagePosition;
+                                Windows.Foundation.Point canvasPosition;
+                                imagePosition.X = double.Parse(circleNode.Attribute("cx").Value, CultureInfo.InvariantCulture);
+                                imagePosition.Y = double.Parse(circleNode.Attribute("cy").Value, CultureInfo.InvariantCulture);
+                                canvasPosition.X = double.Parse(circleNode.Attribute("cx").Value, CultureInfo.InvariantCulture);
+                                canvasPosition.Y = double.Parse(circleNode.Attribute("cy").Value, CultureInfo.InvariantCulture);
+
+                                baum.ImagePosition = imagePosition;
+                                baum.CanvasPosition = canvasPosition;
+                                baumliste.Add(baum);
+
+                                mapAndTrees.baumListe = baumliste;
+                            }
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        _dialogService.ShowErrorDialog("Die importierte Datei entspricht nicht dem benötigten Format.");
+                        return null;
+                    }
+
+
+                }
+            }
+            return mapAndTrees;
 
         }
     }

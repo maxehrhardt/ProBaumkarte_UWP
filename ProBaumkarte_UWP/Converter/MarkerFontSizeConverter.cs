@@ -14,6 +14,7 @@ namespace ProBaumkarte_UWP.Converter
         {
             double fontsize;
             double markersize = (double)value;
+          
             fontsize = markersize*0.8;
 
 

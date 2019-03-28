@@ -40,5 +40,17 @@ namespace ProBaumkarte_UWP.Services.Dialog
 
             return geoDataDialog.mapGeoData;
         }
+
+        public async void ShowErrorDialog(string message)
+        {
+            ContentDialog errorDialog = new ContentDialog
+            {
+                Title = "Fehler!",
+                Content = message,
+                CloseButtonText="Ok"         
+            };
+
+            await errorDialog.ShowAsync();
+        }
     }
 }
