@@ -82,7 +82,7 @@
                 </DataTemplate>
             </controls:CanvasItemsControl.ItemTemplate>
         </controls:CanvasItemsControl>-->
-        <controls:MapControl x:Name="mapControl" Grid.Column="1" MapSource="{Binding MapSource}"  MapMode="{Binding MapMode}"  CurrentBaum="{Binding CurrentBaum, Mode=TwoWay}" BaumCollection="{Binding BaumCollection,Mode=TwoWay}" RenderedMapBitmapSource="{Binding RenderedMapBitmapSource, Mode=TwoWay}" TreeMarkerSize="{Binding TreeMarkerSize, Mode=TwoWay}" />
+        <controls:MapControl x:Name="mapControl" Grid.Column="1" MapSource="{Binding MapSource}"  MapMode="{Binding MapMode}"  CurrentBaum="{Binding CurrentBaum, Mode=TwoWay}" BaumCollection="{Binding BaumCollection,Mode=TwoWay}" RenderedMapBitmapSource="{Binding RenderedMapBitmapSource, Mode=TwoWay}" TreeMarkerSize="{Binding TreeMarkerSize, Mode=TwoWay}" TreeMarkerColor="{Binding TreeMarkerColor, Mode=TwoWay}" />
         
     </Grid>
     <Page.BottomAppBar>

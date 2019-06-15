@@ -26,6 +26,7 @@ using Microsoft.Graphics.Canvas.Svg;
 using Microsoft.Graphics.Canvas;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
+using Windows.UI;
 
 // The User Control item template is documented at https://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -489,6 +490,19 @@ namespace ProBaumkarte_UWP.Controls
         {
             get { return (ObservableCollection<Baum>)GetValue(BaumCollectionProperty); }
             set { SetValue(BaumCollectionProperty, value); }
+        }
+
+        public static readonly DependencyProperty TreeMarkerColorProperty = DependencyProperty.Register("TreeMarkerColor", typeof(Color), typeof(MapControl), new PropertyMetadata(null, new PropertyChangedCallback(OnTreeMarkerColorChanged)));
+
+        private static void OnTreeMarkerColorChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+
+        }
+
+        public Color TreeMarkerColor
+        {
+            get { return (Color)GetValue(TreeMarkerColorProperty); }
+            set { SetValue(TreeMarkerColorProperty, value); }
         }
 
         public static readonly DependencyProperty TreeMarkerSizeProperty = DependencyProperty.Register("TreeMarkerSize", typeof(double), typeof(MapControl), new PropertyMetadata(null, new PropertyChangedCallback(OnTreeMarkerSizeChanged)));

@@ -18,6 +18,7 @@
         <converter:MapModeToIsCheckedConverter x:Key="MapModeConverter"/>
         <converter:TreePositionConverter x:Key="TreePositionConverter"/>
         <converter:IsMarkedToColorConverter x:Key="IsMarkedToColorConverter"/>
+        <converter:ColorConverter x:Key="ColorConverter"/>
         <converter:MapModeToFalseConverter x:Key="MapModeToFalseConverter"/>
         <converter:MarkerFontSizeConverter x:Key="MarkerFontSizeConverter"/>
     </UserControl.Resources>
@@ -53,7 +54,8 @@
                             <Grid>
 
 
-                                <Border CornerRadius="180"  Width="{Binding TreeMarkerSize,ElementName=UserControl}" Height="{Binding TreeMarkerSize,ElementName=UserControl}" Background="{Binding IsMarked, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource IsMarkedToColorConverter}}" Opacity="0.5" PointerPressed="OnTreePointerPressed"  >
+                                <!--<Border CornerRadius="180"  Width="{Binding TreeMarkerSize,ElementName=UserControl}" Height="{Binding TreeMarkerSize,ElementName=UserControl}" Background="{Binding IsMarked, UpdateSourceTrigger=PropertyChanged,Converter={StaticResource IsMarkedToColorConverter}}" Opacity="0.5" PointerPressed="OnTreePointerPressed"  >-->
+                                <Border CornerRadius="180"  Width="{Binding TreeMarkerSize,ElementName=UserControl}" Height="{Binding TreeMarkerSize,ElementName=UserControl}" Background="{Binding TreeMarkerColor, ElementName=UserControl, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource ColorConverter}}" Opacity="0.5" PointerPressed="OnTreePointerPressed"  >
                                     <Border.RenderTransform>
                                         <TranslateTransform
                                             X="{Binding TreeMarkerSize,ElementName=UserControl, Converter={StaticResource TreePositionConverter}}"

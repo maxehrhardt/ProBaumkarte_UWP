@@ -104,6 +104,7 @@
       <DependentUpon>MapControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converter\BoolToVisibilityConverter.cs" />
+    <Compile Include="Converter\ColorConverter.cs" />
     <Compile Include="Converter\IsMarkedToColorConverter.cs" />
     <Compile Include="Converter\MapModeToIsCheckedConverter.cs" />
     <Compile Include="Converter\MapModeToFalseConverter.cs" />
