@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Graphics.Imaging;
+using Windows.UI;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -18,6 +19,7 @@ namespace ProBaumkarte_UWP.Models.Map
         public string MapSvgSource { get; set; }
 
         public double TreeMarkersize { get; set; }
+        public Color TreeMarkerColor{ get; set; }
         public SvgImageSource svgImageSource { get; set; }
 
         public bool IsGeoReferenced { get; set; }

@@ -247,7 +247,13 @@ namespace ProBaumkarte_UWP.Services.File
                 baumMarker.Add(new XAttribute("cx", baum.ImagePosition.X));
                 baumMarker.Add(new XAttribute("cy", baum.ImagePosition.Y));
                 baumMarker.Add(new XAttribute("r", mapFile.TreeMarkersize / 2));
-                baumMarker.Add(new XAttribute("fill", "green"));
+                //baumMarker.Add(new XAttribute("fill", "green"));
+                string color = "rgb(" +
+                    mapFile.TreeMarkerColor.R.ToString() + "," +
+                    mapFile.TreeMarkerColor.G.ToString() + "," +
+                    mapFile.TreeMarkerColor.B.ToString() + ")";
+
+                baumMarker.Add(new XAttribute("fill", color));
                 baumMarker.Add(new XAttribute("fill-opacity", "0.5"));
 
                 Baum_Element.Add(baumMarker);

@@ -51,7 +51,13 @@
             <TextBox Header="Baum Nr." Text="{Binding SelectedBaum.BaumNr,UpdateSourceTrigger=PropertyChanged}" IsReadOnly="True"/>
             <TextBlock Text="Marker Einstellungen"/>
             <TextBox Header="Marker Größe" Text="{Binding TreeMarkerSize, Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"/>
-            <!--<ColorPicker></ColorPicker>-->
+            <TextBlock Text="Marker Farbe"/>
+            <ColorPicker 
+             Color="{Binding TreeMarkerColor, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+             ColorSpectrumShape="Ring"
+             IsColorPreviewVisible="False"
+             IsColorChannelTextInputVisible="False"
+             IsHexInputVisible="False"/>
         </StackPanel>
         
         <!--<Image Grid.Column="2" Source="{Binding MapSource.svgImageSource}"/>-->

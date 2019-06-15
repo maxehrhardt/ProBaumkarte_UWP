@@ -87,6 +87,7 @@ namespace ProBaumkarte_UWP.ViewModels
                 {
                     _mapSource = value;
                     _mapSource.TreeMarkersize = _treeMarkerSize;
+                    _mapSource.TreeMarkerColor= _treeMarkerColor;
                     RaisePropertyChanged("MapSource");
                     
                 }
@@ -249,7 +250,25 @@ namespace ProBaumkarte_UWP.ViewModels
                 }
             }
         }
-        
+
+        private Color _treeMarkerColor;
+        public Color TreeMarkerColor
+        {
+            get { return _treeMarkerColor; }
+            set
+            {
+                if (value != _treeMarkerColor)
+                {
+                    _treeMarkerColor = value;
+                    if (MapSource != null)
+                    {
+                        MapSource.TreeMarkerColor = value;
+                        RaisePropertyChanged(() => MapSource);
+                    }
+                    RaisePropertyChanged(() => TreeMarkerColor);
+                }
+            }
+        }
 
 
         public StartPageViewModel(IFileService fileService,IDialogService dialogService)
@@ -264,6 +283,7 @@ namespace ProBaumkarte_UWP.ViewModels
             BaumCollection = new ObservableCollection<Baum>();
             CurrentBaum = new Baum { BaumNr = 1 };
             TreeMarkerSize = 10;
+            TreeMarkerColor = Color.FromArgb(255, 0, 128, 0);
             RaisePropertyChanged(() => BaumCollection);
 
 
